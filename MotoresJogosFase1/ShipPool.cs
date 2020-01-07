@@ -34,7 +34,7 @@ namespace MotoresJogosFase1
         static int deadShipsCounter;
         static public void Update(GameTime gameTime, Random random, ContentManager contentManager)
         {
-            int deadShipsCounter = 0;
+            deadShipsCounter = 0;
             foreach (Ship ship in ships)//check if any died
             {
                 
