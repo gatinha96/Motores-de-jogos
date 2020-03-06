@@ -10,15 +10,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MotoresJogosFase1
 {
-    class Ship
+    public class Ship
     {
-        private Model model;
-
-        public Model Model
-        {
-            get { return model; }
-            set { model = value; }
-        }
+        ShipModel model;
 
         private Matrix world;
         public Matrix World
@@ -43,15 +37,6 @@ namespace MotoresJogosFase1
             set { speed = value; }
         }
 
-        private float scale;
-
-        public float Scale
-        {
-            get { return scale; }
-            set { scale = value; }
-        }
-
-
         private BoundingSphere boundingSphere;
 
         public BoundingSphere BoundingSphere
@@ -69,27 +54,20 @@ namespace MotoresJogosFase1
         }
 
         //Props /\
-        public Ship(Vector3 position, ContentManager contentManager, float speed, float scale)
+        public Ship(Vector3 position, ContentManager contentManager, float speed)
         {
             this.position = position;
             this.world = Matrix.CreateTranslation(position);
             this.speed = speed;
-            this.scale = scale;
             died = false;
 
-            LoadContent(contentManager);
+            model = new ShipModel();
+            model.LoadContent(contentManager);
 
-            foreach(ModelMesh mesh in this.model.Meshes)
+            foreach (ModelMesh mesh in this.model.Model.Meshes)
             {
                 boundingSphere = BoundingSphere.CreateMerged(this.boundingSphere, mesh.BoundingSphere);
             }
-            boundingSphere.Radius *= scale;
-        }
-
-
-        public void LoadContent(ContentManager contentManager)
-        {
-            model = contentManager.Load<Model>("p1_saucer");
         }
 
         public void Update(GameTime gameTime)
@@ -97,7 +75,7 @@ namespace MotoresJogosFase1
             position.Z -= speed * gameTime.ElapsedGameTime.Milliseconds;
 
             //NEW
-            if(position.Z <= -1000)
+            if(position.Z <= -ShipPool.deathDist)
             {
                 died = true;
             }
@@ -109,12 +87,12 @@ namespace MotoresJogosFase1
 
         public void Draw(Matrix View, Matrix Projection)
         {
-            foreach (ModelMesh mesh in model.Meshes)
+            foreach (ModelMesh mesh in model.Model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.LightingEnabled = false;
-                    effect.World = Matrix.CreateScale(scale) * World;
+                    effect.World = World;
                     effect.View = View;
                     effect.Projection = Projection;
                 }
@@ -124,11 +102,15 @@ namespace MotoresJogosFase1
             DebugShapeRenderer.AddBoundingSphere(boundingSphere, Color.Red);
         }
 
-        //NEW
         public void Respawn(Vector3 position)
         {
             died = false;
             this.position = position;
+        }
+
+        public void Fire()
+        {
+            BulletPool.ActivateOneBullet(position, new Vector3(0f, 0f, -1f));
         }
     }
 }

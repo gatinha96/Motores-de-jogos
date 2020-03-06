@@ -45,17 +45,27 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Command.cs" />
     <Compile Include="ConsoleMessage.cs" />
+    <Compile Include="ControlManager.cs" />
+    <Compile Include="FireWeapon.cs" />
     <Compile Include="GameConsole.cs" />
     <Compile Include="DebugShapeRenderer.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="MemProfiling.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageBus.cs" />
+    <Compile Include="Bullet.cs" />
+    <Compile Include="BulletModel.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="ShipModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ship.cs" />
+    <Compile Include="BulletPool.cs" />
     <Compile Include="ShipPool.cs" />
+    <Compile Include="Skybox.cs" />
+    <Compile Include="SkyboxTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

@@ -34,11 +34,5 @@ namespace MotoresJogosFase1
             this.messageType = messageType;
             this.read = false;
         }
-        //String message;
-        //public Message(MessageType messageType, string message)
-        //{
-        //    this.messageType = messageType;
-        //    this.message = message;
-        //}
     }
 }

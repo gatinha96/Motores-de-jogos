@@ -16,18 +16,28 @@ namespace MotoresJogosFase1
         static List<Ship> inactiveShips;
         static List<Ship> tempShips;
 
-        static public void Initialize()
+        static float shipArea;
+        public static float deathDist;
+        static int max, min;
+        static float maxMinMultiplier;
+
+        public static void Initialize(float deathDist, float shipArea,int max, int min, float maxMinMultiplier)
         {
+            ShipPool.deathDist = deathDist;
             ships = new List<Ship>(100);
             inactiveShips = new List<Ship>(100);
             tempShips = new List<Ship>(100);
+            ShipPool.shipArea = shipArea;
+            ShipPool.min = min;
+            ShipPool.max = max;
+            ShipPool.maxMinMultiplier = maxMinMultiplier;
         }
 
-        static public void CreateShips(Random random,ContentManager Content)
+        static public void CreateShips(ContentManager Content)
         {
             for (int i = 0; i < 100; i++)
             {
-                inactiveShips.Add(new Ship(new Vector3(random.Next(-1000, 1000), random.Next(-1000, 1000), random.Next(-1000, 1000)), Content, 0.5f, 0.01f));
+                inactiveShips.Add(new Ship(RandomShipPos(), Content, CalculateSpeed()));
             }
         }
 
@@ -55,7 +65,7 @@ namespace MotoresJogosFase1
             //Respawn the dead ships
             for(int i = 0; i < deadShipsCounter; i++)
             {
-                ActivateOneShip(random, contentManager);
+                ActivateOneShip(contentManager);
             }
 
 
@@ -63,7 +73,7 @@ namespace MotoresJogosFase1
             //De vez em quando, ativar mais uma nave
             if(random.Next(0, 2) == 1)
             {
-                ActivateOneShip(random, contentManager);
+                ActivateOneShip(contentManager);
                 MessageBus.InsertNewMessage(new ConsoleMessage("Nave adicionada! Total: " + (ships.Count + inactiveShips.Count)));
             }
 
@@ -78,18 +88,28 @@ namespace MotoresJogosFase1
             }
         }
 
-        public static void ActivateOneShip(Random random, ContentManager contentManager)
+        public static void ActivateOneShip(ContentManager contentManager)
         {
             if (inactiveShips.Count > 0)//create one each frame if inactive got ships
             {
-                inactiveShips[0].Respawn(new Vector3(random.Next(-1000, 1000), random.Next(-1000, 1000), random.Next(-1000, 1000)));
+                inactiveShips[0].Respawn(RandomShipPos());
                 ships.Add(inactiveShips[0]);
                 inactiveShips.Remove(inactiveShips[0]);
             }
             else//create one if inactive doesn't have any
             {
-                ships.Add(new Ship(new Vector3(random.Next(-1000, 1000), random.Next(-1000, 1000), random.Next(-1000, 1000)), contentManager, 0.5f, 0.01f));
+                ships.Add(new Ship(RandomShipPos(), contentManager, CalculateSpeed()));
             }
+        }
+
+        public static Vector3 RandomShipPos()
+        {
+            return new Vector3(Game1.random.Next((int)-shipArea, (int)shipArea), Game1.random.Next((int)-shipArea, (int)shipArea), Game1.random.Next((int)-shipArea, (int)shipArea));
+        }
+
+        static float CalculateSpeed()
+        {
+            return Game1.random.Next(min, max) * maxMinMultiplier * Game1.scale;
         }
     }
 }
