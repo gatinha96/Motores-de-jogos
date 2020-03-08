@@ -8,6 +8,6 @@ namespace MotoresJogosFase1
 {
     public abstract class Command
     {
-        public abstract void Execute(Ship playerShip);
+        public abstract void Execute();
     }
 }

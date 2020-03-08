@@ -10,14 +10,20 @@ namespace MotoresJogosFase1
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
+        InputManager inputManager;
 
         Camera camera;
-        Player player;
-        SkyboxTest SkyboxTest;
+        public static Player player;
+        SkyboxTest skyboxTest;
 
         public static Random random;
 
         public static float scale;
+
+        public static Color testcolor;
+
+        float speedMultiplier;
+        int maxSpeed, minSpeed;
 
         public Game1()
         {
@@ -35,17 +41,28 @@ namespace MotoresJogosFase1
         protected override void Initialize()
         {
             scale = 0.5f;
+            testcolor = Color.Black;
 
-            camera = new Camera(new Vector3(0, 0, 50), graphics, 1f * scale, 5000f * scale);
+            camera = new Camera(Vector3.Zero, graphics, 1f * scale, 5000f * scale);//old farplane was 5k
             random = new Random();
+
+            maxSpeed = 5;
+            minSpeed = 1;
+            speedMultiplier = 0.02f;
+
+            MessageBus.Initialize();
+            inputManager = new InputManager();
+            inputManager.Initialize();
+            ControlManager.Initialize();
             DebugShapeRenderer.Initialize(GraphicsDevice);
 
-            player = new Player(Vector3.Zero, Content, 0.01f * scale);
-
-            ShipPool.Initialize(1000 * scale, 100 * scale, 5, 1, 0.01f);
-            BulletPool.Initialize();
-            MessageBus.Initialize();
+            ShipPool.Initialize(1000 * scale, 100 * scale, maxSpeed, minSpeed, speedMultiplier * scale);
+            BulletPool.Initialize(0.2f * scale);
+            player = new Player(Vector3.Zero, minSpeed * speedMultiplier * scale, new Vector3(0, 0, -1f));
+            
             //Skybox.Initialize(5000f * scale / 2);
+
+            ShipPool.CreateShips();
 
             base.Initialize();
         }
@@ -53,15 +70,18 @@ namespace MotoresJogosFase1
         protected override void LoadContent()
         {
             //Skybox.LoadContent(Content);
-            SkyboxTest = new SkyboxTest(Content);
-            BulletModel.LoadContent(Content);
-            BulletPool.CreateBullets();
+            skyboxTest = new SkyboxTest(Content, 5000 * scale / 2f);
 
-            ShipPool.CreateShips(Content);
+            BulletModel.LoadContent(Content);
+            ShipModel.LoadContent(Content);
+
+            player.LoadContent();
+            ShipPool.LoadContent();
+            BulletPool.CreateBullets();
 
             for (int i = 0; i < 100; i++)
             {
-                ShipPool.ActivateOneShip(Content);
+                ShipPool.ActivateOneShip();
             }
         }
 
@@ -77,34 +97,35 @@ namespace MotoresJogosFase1
                 Exit();
             }
 
-            Command c = ControlManager.Update();
-            if (c != null)
-            {
-                //INSERT PLAYER
-                //c.Execute();
-            }
+            ControlManager.Update();
 
             player.Update(gameTime);
-            ShipPool.Update(gameTime,random,Content);
-            BulletPool.Update(gameTime, random, Content);
+            ShipPool.Update(gameTime,random);
+            BulletPool.Update(gameTime, random);
 
             GameConsole.Update();
             MessageBus.Update();
             MemProfiling.Update();
 
-            camera.Update(player.World, 2 * scale, 0.2f * scale);
+            //first parameter is player.World, change
+            camera.Update(player.World, 10 * scale, 2f * scale);
+
+            inputManager.Update();
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(testcolor);
 
             //Skybox.Draw(camera.View, camera.Projection, camera.Position);
-            SkyboxTest.Draw(camera.View, camera.Projection, camera.Position);
+            skyboxTest.Draw(camera.View, camera.Projection, camera.Position);
+
             ShipPool.Draw(camera);
             BulletPool.Draw(camera);
+
+            player.Draw(camera.View, camera.Projection);
 
             DebugShapeRenderer.Draw(gameTime, camera.View, camera.Projection);
 

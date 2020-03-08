@@ -51,7 +51,7 @@ namespace MotoresJogosFase1
 
         public void Update(Matrix target, float dist, float up)
         {
-            KeyManager();
+            //KeyManager();
             if(!free)
             {
                 Follow(target, dist, up);
@@ -78,6 +78,11 @@ namespace MotoresJogosFase1
             {
                 free = false;
             }
+        }
+
+        public bool InView(BoundingSphere boundingSphere)
+        {
+            return new BoundingFrustum(View * Projection).Intersects(boundingSphere);
         }
     }
 }

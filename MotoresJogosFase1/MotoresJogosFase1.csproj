@@ -45,27 +45,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
-    <Compile Include="Command.cs" />
-    <Compile Include="ConsoleMessage.cs" />
-    <Compile Include="ControlManager.cs" />
-    <Compile Include="FireWeapon.cs" />
-    <Compile Include="GameConsole.cs" />
-    <Compile Include="DebugShapeRenderer.cs" />
+    <Compile Include="Command\Command.cs" />
+    <Compile Include="Input\InputManager.cs" />
+    <Compile Include="MessageManager\ConsoleMessage.cs" />
+    <Compile Include="Command\ControlManager.cs" />
+    <Compile Include="Command\FireWeapon.cs" />
+    <Compile Include="MessageManager\GameConsole.cs" />
+    <Compile Include="Debug\DebugShapeRenderer.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="MemProfiling.cs" />
-    <Compile Include="Message.cs" />
-    <Compile Include="MessageBus.cs" />
-    <Compile Include="Bullet.cs" />
-    <Compile Include="BulletModel.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="ShipModel.cs" />
+    <Compile Include="Debug\MemProfiling.cs" />
+    <Compile Include="MessageManager\Message.cs" />
+    <Compile Include="MessageManager\MessageBus.cs" />
+    <Compile Include="Bullet\Bullet.cs" />
+    <Compile Include="Bullet\BulletModel.cs" />
+    <Compile Include="Ship\Player.cs" />
+    <Compile Include="Ship\ShipModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Ship.cs" />
-    <Compile Include="BulletPool.cs" />
-    <Compile Include="ShipPool.cs" />
-    <Compile Include="Skybox.cs" />
-    <Compile Include="SkyboxTest.cs" />
+    <Compile Include="Ship\Ship.cs" />
+    <Compile Include="Bullet\BulletPool.cs" />
+    <Compile Include="Ship\ShipPool.cs" />
+    <Compile Include="Skybox\Skybox.cs" />
+    <Compile Include="Skybox\SkyboxTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

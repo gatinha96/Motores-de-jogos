@@ -5,14 +5,15 @@
 //using System.Threading.Tasks;
 using AlienGrab;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+//using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MotoresJogosFase1
 {
     public class Ship
     {
-        ShipModel model;
+        Model model;
 
         private Matrix world;
         public Matrix World
@@ -45,7 +46,6 @@ namespace MotoresJogosFase1
             set { boundingSphere = value; }
         }
 
-        //NEW
         private bool died;
         public bool Died
         {
@@ -53,26 +53,43 @@ namespace MotoresJogosFase1
             set { died = value; }
         }
 
-        //Props /\
-        public Ship(Vector3 position, ContentManager contentManager, float speed)
+        private Vector3 dir;
+
+        public Vector3 Dir
+        {
+            get { return dir; }
+            set { dir = value; }
+        }
+
+        //Props
+        public Ship(Vector3 position, float speed, Vector3 dir)
         {
             this.position = position;
             this.world = Matrix.CreateTranslation(position);
             this.speed = speed;
+            dir.Normalize();
+            this.dir = dir;
             died = false;
+        }
 
-            model = new ShipModel();
-            model.LoadContent(contentManager);
+        public virtual void LoadContent()
+        {
+            model = ShipModel.Model;
 
-            foreach (ModelMesh mesh in this.model.Model.Meshes)
+            if(model == null)
             {
-                boundingSphere = BoundingSphere.CreateMerged(this.boundingSphere, mesh.BoundingSphere);
+                throw new System.Exception("Model is null");
+            }
+
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                boundingSphere = BoundingSphere.CreateMerged(boundingSphere, mesh.BoundingSphere);
             }
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
-            position.Z -= speed * gameTime.ElapsedGameTime.Milliseconds;
+            position += speed * gameTime.ElapsedGameTime.Milliseconds * dir;
 
             //NEW
             if(position.Z <= -ShipPool.deathDist)
@@ -80,23 +97,29 @@ namespace MotoresJogosFase1
                 died = true;
             }
 
-            world = Matrix.CreateTranslation(position);
-
             boundingSphere.Center = position;
+            world = Matrix.CreateTranslation(position);
         }
 
-        public void Draw(Matrix View, Matrix Projection)
+        public virtual void Draw(Matrix View, Matrix Projection)
         {
-            foreach (ModelMesh mesh in model.Model.Meshes)
+            try
             {
-                foreach (BasicEffect effect in mesh.Effects)
+                foreach (ModelMesh mesh in model.Meshes)
                 {
-                    effect.LightingEnabled = false;
-                    effect.World = World;
-                    effect.View = View;
-                    effect.Projection = Projection;
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.LightingEnabled = false;
+                        effect.World = World;
+                        effect.View = View;
+                        effect.Projection = Projection;
+                    }
+                    mesh.Draw();
                 }
-                mesh.Draw();
+            }
+            catch (Exception e)
+            {
+                MessageBus.InsertNewMessage(new ConsoleMessage("Failed to draw ship: " + e.ToString()));
             }
 
             DebugShapeRenderer.AddBoundingSphere(boundingSphere, Color.Red);

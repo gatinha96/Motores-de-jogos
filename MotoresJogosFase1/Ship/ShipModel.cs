@@ -1,11 +1,16 @@
-﻿using AlienGrab;
-using Microsoft.Xna.Framework;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
+//using AlienGrab;
+//using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MotoresJogosFase1
 {
-    public class BulletModel
+    public static class ShipModel
     {
         static private Model model;
 
@@ -17,8 +22,7 @@ namespace MotoresJogosFase1
 
         public static void LoadContent(ContentManager contentManager)
         {
-            //CHANGE
-            model = contentManager.Load<Model>("rocket");
+            model = contentManager.Load<Model>("p1_saucer");
         }
     }
 }

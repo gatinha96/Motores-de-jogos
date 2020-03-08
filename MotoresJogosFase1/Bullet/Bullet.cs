@@ -40,15 +40,6 @@ namespace MotoresJogosFase1
             set { speed = value; }
         }
 
-        private float scale;
-
-        public float Scale
-        {
-            get { return scale; }
-            set { scale = value; }
-        }
-
-
         private BoundingSphere boundingSphere;
 
         public BoundingSphere BoundingSphere
@@ -66,28 +57,25 @@ namespace MotoresJogosFase1
         }
 
         //Props
-        public Bullet(Vector3 position, float speed, float scale, Vector3 dir)
+        public Bullet(Vector3 position, float speed, Vector3 dir)
         {
             this.position = position;
             this.world = Matrix.CreateTranslation(position);
             this.speed = speed;
-            this.scale = scale;
             this.dir = dir;
+            this.dir.Normalize();
             died = false;
 
             model = BulletModel.Model;
-            //model.LoadContent(contentManager);
 
             foreach (ModelMesh mesh in model.Meshes)
             {
                 boundingSphere = BoundingSphere.CreateMerged(this.boundingSphere, mesh.BoundingSphere);
             }
-            boundingSphere.Radius *= scale;
         }
 
         public void Update(GameTime gameTime)
         {
-            dir.Normalize();
             position += speed * gameTime.ElapsedGameTime.Milliseconds * dir;
 
             //NEW
@@ -99,11 +87,6 @@ namespace MotoresJogosFase1
             world = Matrix.CreateTranslation(position);
 
             boundingSphere.Center = position;
-
-            //if (boundingSphere.Intersects(ships))
-            //{
-            //    died = true;
-            //}
         }
 
         public void Draw(Matrix View, Matrix Projection)
@@ -113,7 +96,7 @@ namespace MotoresJogosFase1
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.LightingEnabled = false;
-                    effect.World = Matrix.CreateScale(scale) * World;
+                    effect.World = World;
                     effect.View = View;
                     effect.Projection = Projection;
                 }

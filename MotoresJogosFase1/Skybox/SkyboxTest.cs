@@ -6,47 +6,20 @@ namespace MotoresJogosFase1
 {
     class SkyboxTest
     {
-        /// <summary>
-        /// The skybox model, which will just be a cube
-        /// </summary>
         private Model skyBox;
-
-        /// <summary>
-        /// The actual skybox texture
-        /// </summary>
         private TextureCube skyBoxTexture;
-
-        /// <summary>
-        /// The effect file that the skybox will use to render
-        /// </summary>
         private Effect skyBoxEffect;
 
-        /// <summary>
-        /// The size of the cube, used so that we can resize the box
-        /// for different sized environments.
-        /// </summary>
-        private float size = 5000 * Game1.scale / 2f;
+        private float size;
 
-        /// <summary>
-        /// Creates a new skybox
-        /// </summary>
-        /// <param name="skyboxTexture">the name of the skybox texture to use</param>
-        public SkyboxTest(ContentManager Content)
+        public SkyboxTest(ContentManager Content, float size)
         {
+            this.size = size;
             skyBox = Content.Load<Model>("Skybox/Cube");
             skyBoxTexture = Content.Load<TextureCube>("Skybox/CubeMap");
             skyBoxEffect = Content.Load<Effect>("Skybox/Effect");
         }
 
-        /// <summary>
-        /// Does the actual drawing of the skybox with our skybox effect.
-        /// There is no world matrix, because we're assuming the skybox won't
-        /// be moved around.  The size of the skybox can be changed with the size
-        /// variable.
-        /// </summary>
-        /// <param name="view">The view matrix for the effect</param>
-        /// <param name="projection">The projection matrix for the effect</param>
-        /// <param name="cameraPosition">The position of the camera</param>
         public void Draw(Matrix view, Matrix projection, Vector3 cameraPosition)
         {
             // Go through each pass in the effect, but we know there is only one...

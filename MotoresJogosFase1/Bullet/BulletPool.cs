@@ -9,12 +9,18 @@ namespace MotoresJogosFase1
 {
     public static class BulletPool
     {
+        static float speed;
+
         static List<Bullet> bullets;
         static List<Bullet> inactiveBullets;
         static List<Bullet> tempBullets;
 
-        static public void Initialize()
+        static int deadShipsCounter;
+
+        static public void Initialize(float speed)
         {
+            BulletPool.speed = speed;
+
             bullets = new List<Bullet>(100);
             inactiveBullets = new List<Bullet>(100);
             tempBullets = new List<Bullet>(100);
@@ -24,21 +30,42 @@ namespace MotoresJogosFase1
         {
             for (int i = 0; i < 100; i++)
             {
-                inactiveBullets.Add(new Bullet(Vector3.Zero, 0.5f, 0.01f, Vector3.Zero));
+                inactiveBullets.Add(new Bullet(Vector3.Zero, speed, Vector3.Zero));
             }
         }
 
-        static int deadShipsCounter;
-        static public void Update(GameTime gameTime, Random random, ContentManager contentManager)
+        static public void Update(GameTime gameTime, Random random)
         {
             deadShipsCounter = 0;
-            foreach (Bullet b in bullets)//check if any died
+            for (int j=0;j<bullets.Count;j++)//check if any died
             {
-                
-                b.Update(gameTime);
-                if (b.Died)
+                bullets[j].Update(gameTime);
+
+                for (int i = 0; i < bullets.Count; i++)
                 {
-                    tempBullets.Add(b);
+                    if (bullets[i] != bullets[j] && bullets[j].BoundingSphere.Intersects(bullets[i].BoundingSphere))
+                    {
+                        bullets[j].Died = true;
+                        bullets[i].Died = true;
+
+                        MessageBus.Messages.Add(new ConsoleMessage("2 bullets collided!"));
+                    }
+                }
+
+                foreach (Ship s in ShipPool.ships)
+                {
+                    if(bullets[j].BoundingSphere.Intersects(s.BoundingSphere))
+                    {
+                        bullets[j].Died = true;
+                        s.Died = true;
+
+                        MessageBus.Messages.Add(new ConsoleMessage("1 ship was hit!"));
+                    }
+                }
+
+                if (bullets[j].Died)
+                {
+                    tempBullets.Add(bullets[j]);
                     deadShipsCounter++;
                 }
             }
@@ -54,12 +81,18 @@ namespace MotoresJogosFase1
         {
             foreach (Bullet b in bullets)
             {
-                b.Draw(camera.View, camera.Projection);
+                if (camera.InView(b.BoundingSphere.Transform(b.World)))
+                {
+                    b.Draw(camera.View, camera.Projection);
+                }
             }
         }
 
         public static void ActivateOneBullet(Vector3 pos, Vector3 dir)
         {
+            dir.Normalize();
+            pos += dir * 0.5f;
+
             if (inactiveBullets.Count > 0)//get one if inactive got bullets
             {
                 inactiveBullets[0].Respawn(pos, dir);
@@ -68,7 +101,7 @@ namespace MotoresJogosFase1
             }
             else//create one if inactive doesn't have any
             {
-                bullets.Add(new Bullet(pos, 0.5f, 0.01f, dir));
+                bullets.Add(new Bullet(pos, speed, dir));
             }
         }
     }
