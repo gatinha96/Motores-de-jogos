@@ -51,9 +51,9 @@
     <Compile Include="Command\ControlManager.cs" />
     <Compile Include="Command\FireWeapon.cs" />
     <Compile Include="MessageManager\GameConsole.cs" />
-    <Compile Include="Debug\DebugShapeRenderer.cs" />
+    <Compile Include="Helpers\DebugShapeRenderer.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Debug\MemProfiling.cs" />
+    <Compile Include="Helpers\MemProfiling.cs" />
     <Compile Include="MessageManager\Message.cs" />
     <Compile Include="MessageManager\MessageBus.cs" />
     <Compile Include="Bullet\Bullet.cs" />
@@ -81,6 +81,9 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Debug\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
