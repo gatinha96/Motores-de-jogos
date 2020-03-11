@@ -70,13 +70,10 @@ namespace MotoresJogosFase1
             dir.Normalize();
             this.dir = dir;
             died = false;
-        }
 
-        public virtual void LoadContent()
-        {
             model = ShipModel.Model;
 
-            if(model == null)
+            if (model == null)
             {
                 throw new System.Exception("Model is null");
             }

@@ -33,13 +33,13 @@ namespace MotoresJogosFase1
             ShipPool.maxMinMultiplier = maxMinMultiplier;
         }
 
-        public static void LoadContent()
-        {
-            foreach(Ship s in inactiveShips)
-            {
-                s.LoadContent();
-            }
-        }
+        //public static void LoadContent()
+        //{
+        //    foreach(Ship s in inactiveShips)
+        //    {
+        //        s.LoadContent();
+        //    }
+        //}
 
         static public void CreateShips()
         {
@@ -128,7 +128,7 @@ namespace MotoresJogosFase1
             else//create one if inactive doesn't have any
             {
                 Ship s = new Ship(RandomShipPos(), CalculateSpeed(), new Vector3(0, 0, -1));
-                s.LoadContent();
+                //s.LoadContent();
                 ships.Add(s);
             }
         }

@@ -46,6 +46,8 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="Command\Command.cs" />
+    <Compile Include="GameManager\GameManager.cs" />
+    <Compile Include="GameManager\MainMenu.cs" />
     <Compile Include="Input\InputManager.cs" />
     <Compile Include="MessageManager\ConsoleMessage.cs" />
     <Compile Include="Command\ControlManager.cs" />

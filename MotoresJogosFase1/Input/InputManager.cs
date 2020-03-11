@@ -10,7 +10,9 @@ namespace MotoresJogosFase1
     public enum Input
     {
         None,
-        Fire
+        Fire,
+        Pause,
+        Enter
     }
 
     public enum MouseInput
@@ -50,19 +52,15 @@ namespace MotoresJogosFase1
             // Save the one and only (if available) mousestate 
             previousMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
-
-            //Fire
-            if (Clicked(Input.Fire) || Clicked(MouseInput.LeftButton))
-            {
-                FireWeapon f = new FireWeapon(Game1.player);
-                ControlManager.currentCommands.Add(f);
-            }
         }
 
         void SetDictionary()
         {
             KeyboardMap.Add(Input.None, Keys.None);
             KeyboardMap.Add(Input.Fire, Keys.Space);
+            KeyboardMap.Add(Input.Pause, Keys.Escape);
+            KeyboardMap.Add(Input.Enter, Keys.Enter);
+
             MouseMap.Add(Input.Fire, MouseInput.LeftButton);
         }
 

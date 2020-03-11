@@ -11,6 +11,7 @@ namespace MotoresJogosFase1
     {
         GraphicsDeviceManager graphics;
         InputManager inputManager;
+        SpriteBatch spriteBatch;
 
         Camera camera;
         public static Player player;
@@ -40,10 +41,12 @@ namespace MotoresJogosFase1
 
         protected override void Initialize()
         {
+            GameManager.Initialize();
+
             scale = 0.5f;
             testcolor = Color.Black;
 
-            camera = new Camera(Vector3.Zero, graphics, 1f * scale, 5000f * scale);//old farplane was 5k
+            camera = new Camera(Vector3.Zero, graphics, 1f * scale, 5000f * scale);
             random = new Random();
 
             maxSpeed = 5;
@@ -58,25 +61,26 @@ namespace MotoresJogosFase1
 
             ShipPool.Initialize(1000 * scale, 100 * scale, maxSpeed, minSpeed, speedMultiplier * scale);
             BulletPool.Initialize(0.2f * scale);
-            player = new Player(Vector3.Zero, minSpeed * speedMultiplier * scale, new Vector3(0, 0, -1f));
             
             //Skybox.Initialize(5000f * scale / 2);
-
-            ShipPool.CreateShips();
 
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            MenuManager.LoadContent(Content);
+
             //Skybox.LoadContent(Content);
             skyboxTest = new SkyboxTest(Content, 5000 * scale / 2f);
 
             BulletModel.LoadContent(Content);
             ShipModel.LoadContent(Content);
 
-            player.LoadContent();
-            ShipPool.LoadContent();
+            player = new Player(Vector3.Zero, minSpeed * speedMultiplier * scale, new Vector3(0, 0, -1f));
+            ShipPool.CreateShips();
             BulletPool.CreateBullets();
 
             for (int i = 0; i < 100; i++)
@@ -87,21 +91,53 @@ namespace MotoresJogosFase1
 
         protected override void UnloadContent()
         {
-            
+            Content.Unload();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            {
-                Exit();
-            }
-
             ControlManager.Update();
 
-            player.Update(gameTime);
-            ShipPool.Update(gameTime,random);
-            BulletPool.Update(gameTime, random);
+            if (GameManager.GameState == GameState.InGame)
+            {
+                //Fire
+                if ((inputManager.Clicked(Input.Fire) || inputManager.Clicked(MouseInput.LeftButton)))
+                {
+                    FireWeapon f = new FireWeapon(player);
+                    ControlManager.currentCommands.Add(f);
+                }
+
+                //Pause
+                if (inputManager.Clicked(Input.Pause))
+                {
+                    GameManager.GameState = GameState.Pause;
+                }
+
+                player.Update(gameTime);
+                ShipPool.Update(gameTime, random);
+                BulletPool.Update(gameTime, random);
+            }
+            else if (GameManager.GameState == GameState.Pause)
+            {
+                if (inputManager.Clicked(Input.Pause))
+                {
+                    GameManager.GameState = GameState.InGame;
+                }
+            }
+            else if (GameManager.GameState == GameState.MainMenu)
+            {
+                if (inputManager.Clicked(Input.Enter))
+                {
+                    GameManager.GameState = GameState.InGame;
+                }
+            }
+            else if (GameManager.GameState == GameState.Lost)
+            {
+                if (inputManager.Clicked(Input.Enter))
+                {
+                    GameManager.GameState = GameState.MainMenu;
+                }
+            }
 
             GameConsole.Update();
             MessageBus.Update();
@@ -119,13 +155,20 @@ namespace MotoresJogosFase1
         {
             GraphicsDevice.Clear(testcolor);
 
-            //Skybox.Draw(camera.View, camera.Projection, camera.Position);
-            skyboxTest.Draw(camera.View, camera.Projection, camera.Position);
+            if (GameManager.GameState == GameState.InGame) //Game logic
+            {
+                //Skybox.Draw(camera.View, camera.Projection, camera.Position);
+                skyboxTest.Draw(camera.View, camera.Projection, camera.Position);
 
-            ShipPool.Draw(camera);
-            BulletPool.Draw(camera);
+                ShipPool.Draw(camera);
+                BulletPool.Draw(camera);
 
-            player.Draw(camera.View, camera.Projection);
+                player.Draw(camera.View, camera.Projection);
+            }
+            else if (GameManager.GameState == GameState.MainMenu || GameManager.GameState == GameState.Pause || GameManager.GameState == GameState.Lost) //Menu Logic
+            {
+                MenuManager.Draw(spriteBatch, graphics);
+            }
 
             DebugShapeRenderer.Draw(gameTime, camera.View, camera.Projection);
 
