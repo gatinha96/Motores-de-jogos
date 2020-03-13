@@ -79,7 +79,7 @@ namespace MotoresJogosFase1
             position += speed * gameTime.ElapsedGameTime.Milliseconds * dir;
 
             //NEW
-            if(position.Z <= -1000)
+            if(position.Z <= -1000 || position.Z >= 1000)
             {
                 died = true;
             }

@@ -12,7 +12,11 @@ namespace MotoresJogosFase1
         None,
         Fire,
         Pause,
-        Enter
+        Enter,
+        Forward,
+        Backward,
+        Right,
+        Left
     }
 
     public enum MouseInput
@@ -60,6 +64,10 @@ namespace MotoresJogosFase1
             KeyboardMap.Add(Input.Fire, Keys.Space);
             KeyboardMap.Add(Input.Pause, Keys.Escape);
             KeyboardMap.Add(Input.Enter, Keys.Enter);
+            KeyboardMap.Add(Input.Forward, Keys.W);
+            KeyboardMap.Add(Input.Backward, Keys.S);
+            KeyboardMap.Add(Input.Right, Keys.D);
+            KeyboardMap.Add(Input.Left, Keys.A);
 
             MouseMap.Add(Input.Fire, MouseInput.LeftButton);
         }

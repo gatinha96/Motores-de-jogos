@@ -65,9 +65,9 @@ namespace MotoresJogosFase1
         public Ship(Vector3 position, float speed, Vector3 dir)
         {
             this.position = position;
-            this.world = Matrix.CreateTranslation(position);
-            this.speed = speed;
             dir.Normalize();
+            world = Matrix.CreateWorld(position, dir, Vector3.Up);
+            this.speed = speed;
             this.dir = dir;
             died = false;
 
@@ -86,16 +86,18 @@ namespace MotoresJogosFase1
 
         public virtual void Update(GameTime gameTime)
         {
-            position += speed * gameTime.ElapsedGameTime.Milliseconds * dir;
+            //position += speed * gameTime.ElapsedGameTime.Milliseconds * dir;
+            world *= Matrix.CreateTranslation(speed * gameTime.ElapsedGameTime.Milliseconds * dir);
+            position = world.Translation;
 
             //NEW
-            if(position.Z <= -ShipPool.deathDist)
+            if (position.Z <= -ShipPool.deathDist)
             {
                 died = true;
             }
 
-            boundingSphere.Center = position;
-            world = Matrix.CreateTranslation(position);
+            SetBoundingSphereCenter(position);
+            //world = Matrix.CreateTranslation(position);
         }
 
         public virtual void Draw(Matrix View, Matrix Projection)
@@ -122,6 +124,11 @@ namespace MotoresJogosFase1
             DebugShapeRenderer.AddBoundingSphere(boundingSphere, Color.Red);
         }
 
+        public void SetBoundingSphereCenter(Vector3 Center)
+        {
+            boundingSphere.Center = Center;
+        }
+
         public void Respawn(Vector3 position)
         {
             died = false;
@@ -130,7 +137,7 @@ namespace MotoresJogosFase1
 
         public void Fire()
         {
-            BulletPool.ActivateOneBullet(position, new Vector3(0f, 0f, -1f));
+            BulletPool.ActivateOneBullet(World.Translation, World.Forward);
         }
     }
 }

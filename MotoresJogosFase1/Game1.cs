@@ -12,6 +12,7 @@ namespace MotoresJogosFase1
         GraphicsDeviceManager graphics;
         InputManager inputManager;
         SpriteBatch spriteBatch;
+        BasicEffect basicEffect;
 
         Camera camera;
         public static Player player;
@@ -37,6 +38,9 @@ namespace MotoresJogosFase1
             graphics.PreferredBackBufferHeight = 900;
 
             Content.RootDirectory = "Content";
+
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.SetCursorPosition(0, 0);
         }
 
         protected override void Initialize()
@@ -69,6 +73,10 @@ namespace MotoresJogosFase1
 
         protected override void LoadContent()
         {
+            basicEffect = new BasicEffect(GraphicsDevice);
+            basicEffect.View = Matrix.CreateLookAt(new Vector3(50, 50, 50), new Vector3(0, 0, 0), Vector3.Up);
+            basicEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45f), GraphicsDevice.Viewport.AspectRatio, 1f, 1000f);
+
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             MenuManager.LoadContent(Content);
@@ -79,7 +87,7 @@ namespace MotoresJogosFase1
             BulletModel.LoadContent(Content);
             ShipModel.LoadContent(Content);
 
-            player = new Player(Vector3.Zero, minSpeed * speedMultiplier * scale, new Vector3(0, 0, -1f));
+            player = new Player(Vector3.Zero, minSpeed * speedMultiplier * scale, new Vector3(0, 0, -1f), 0.005f);
             ShipPool.CreateShips();
             BulletPool.CreateBullets();
 
@@ -113,7 +121,7 @@ namespace MotoresJogosFase1
                     GameManager.GameState = GameState.Pause;
                 }
 
-                player.Update(gameTime);
+                player.CustomUpdate(gameTime, inputManager);
                 ShipPool.Update(gameTime, random);
                 BulletPool.Update(gameTime, random);
             }
@@ -154,6 +162,7 @@ namespace MotoresJogosFase1
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(testcolor);
+            basicEffect.CurrentTechnique.Passes[0].Apply();
 
             if (GameManager.GameState == GameState.InGame) //Game logic
             {
@@ -161,9 +170,22 @@ namespace MotoresJogosFase1
                 skyboxTest.Draw(camera.View, camera.Projection, camera.Position);
 
                 ShipPool.Draw(camera);
+
+                //testing purposes
+                //foreach (Ship s in ShipPool.ships)
+                //{
+                //    if (camera.InView(s.BoundingSphere))
+                //    {
+                //        testWorld(GraphicsDevice, s.World);
+                //    }
+                //}
+
                 BulletPool.Draw(camera);
 
+                //Draw Player
                 player.Draw(camera.View, camera.Projection);
+                //Testing Player
+                //testWorld(GraphicsDevice, player.World);
             }
             else if (GameManager.GameState == GameState.MainMenu || GameManager.GameState == GameState.Pause || GameManager.GameState == GameState.Lost) //Menu Logic
             {
@@ -173,6 +195,22 @@ namespace MotoresJogosFase1
             DebugShapeRenderer.Draw(gameTime, camera.View, camera.Projection);
 
             base.Draw(gameTime);
+        }
+
+        public void testWorld(GraphicsDevice graphicsDevice, Matrix World)
+        {
+            DrawLine(graphicsDevice, World.Translation, World.Translation + 10 * World.Forward * scale);
+            DrawLine(graphicsDevice, World.Translation, World.Translation + 10 * World.Right * scale);
+            DrawLine(graphicsDevice, World.Translation, World.Translation + 10 * World.Left * scale);
+            DrawLine(graphicsDevice, World.Translation, World.Translation + 10 * World.Backward * scale);
+            DrawLine(graphicsDevice, World.Translation, World.Translation + 10 * World.Up * scale);
+            DrawLine(graphicsDevice, World.Translation, World.Translation + 10 * World.Down * scale);
+        }
+
+        public static void DrawLine(GraphicsDevice graphicsDevice, Vector3 origin, Vector3 endPos)
+        {
+            var vertices = new[] { new VertexPositionColor(origin, Color.Red), new VertexPositionColor(endPos, Color.Red) };
+            graphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, 1);
         }
     }
 }

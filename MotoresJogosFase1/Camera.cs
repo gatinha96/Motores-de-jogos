@@ -46,6 +46,7 @@ namespace MotoresJogosFase1
         public void Follow(Matrix target, float dist, float up)
         {
             position = target.Translation + target.Backward * dist + target.Up * up;
+            //position = target.Translation + Vector3.Backward * dist + Vector3.Up * up;
             view = Matrix.CreateLookAt(position, target.Translation, Vector3.Up);
         }
 
