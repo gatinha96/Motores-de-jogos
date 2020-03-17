@@ -75,20 +75,24 @@ namespace MotoresJogosFase1
         {
             if (inputManager.IsPressed(Input.Forward))
             {
-                World *= Matrix.CreateFromAxisAngle(World.Right, -turn);
+                //World *= Matrix.CreateFromAxisAngle(World.Right, -turn);
+                World *= Matrix.CreateFromAxisAngle(Vector3.Right, -turn);
             }
             else if (inputManager.IsPressed(Input.Backward))
             {
-                World *= Matrix.CreateFromAxisAngle(World.Right, turn);
+                //World *= Matrix.CreateFromAxisAngle(World.Right, turn);
+                World *= Matrix.CreateFromAxisAngle(Vector3.Right, turn);
             }
 
             if (inputManager.IsPressed(Input.Left))
             {
-                World *= Matrix.CreateFromAxisAngle(World.Up, turn);
+                //World *= Matrix.CreateFromAxisAngle(World.Up, turn);
+                World *= Matrix.CreateFromAxisAngle(Vector3.Up, turn);
             }
             else if (inputManager.IsPressed(Input.Right))
             {
-                World *= Matrix.CreateFromAxisAngle(World.Up, -turn);
+                // World *= Matrix.CreateFromAxisAngle(World.Up, -turn);
+                World *= Matrix.CreateFromAxisAngle(Vector3.Up, -turn);
             }
         }
     }
