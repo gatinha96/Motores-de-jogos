@@ -60,6 +60,7 @@
     <Compile Include="MessageManager\MessageBus.cs" />
     <Compile Include="Bullet\Bullet.cs" />
     <Compile Include="Bullet\BulletModel.cs" />
+    <Compile Include="ParticleSpawner.cs" />
     <Compile Include="Ship\Player.cs" />
     <Compile Include="Ship\ShipModel.cs" />
     <Compile Include="Program.cs" />

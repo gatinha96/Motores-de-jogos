@@ -14,6 +14,7 @@ namespace MotoresJogosFase1
         public override void Execute()
         {
             MessageBus.Messages.Add(new ConsoleMessage("Firing!"));
+            ParticleSpawner particleSpawner = new ParticleSpawner();
             s.Fire();
         }
     }
