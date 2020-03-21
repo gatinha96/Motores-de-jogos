@@ -5,6 +5,7 @@ namespace MotoresJogosFase1
     public class FireWeapon : Command
     {
         Ship s;
+        ParticleSpawner particleSpawner = new ParticleSpawner();
 
         public FireWeapon(Ship s)
         {
@@ -14,7 +15,7 @@ namespace MotoresJogosFase1
         public override void Execute()
         {
             MessageBus.Messages.Add(new ConsoleMessage("Firing!"));
-            ParticleSpawner particleSpawner = new ParticleSpawner();
+            particleSpawner.Notify();
             s.Fire();
         }
     }
